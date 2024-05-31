@@ -1,0 +1,37 @@
+version: '3.9'
+
+name: todo
+
+services:
+  api:
+    build: .
+    container_name: api_c
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - TEST_DATABASE_URL=${TEST_DATABASE_URL}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - JWT_ALGORITHM=${JWT_ALGORITHM}
+  db:
+    image: postgres:latest
+    restart: always
+    container_name: postgres_c
+    ports:
+      - 5432:5432
+    environment:
+        - POSTGRES_USER=${POSTGRES_USER}
+        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+        - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+
+volumes:
+  postgres_db:
+    driver: local
+
+networks:
+  default:
+    driver: bridge
